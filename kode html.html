@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kas Vint Journey Group</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 15px; }
+    .container { max-width: 450px; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin: auto; }
+    h2 { text-align: center; color: #1a252f; margin-top: 0; margin-bottom: 20px; font-size: 20px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-weight: 600; margin-bottom: 4px; color: #495057; font-size: 13px; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+    input:focus, select:focus, textarea:focus { border-color: #00c4cc; outline: none; }
+    button { width: 100%; padding: 12px; background-color: #00c4cc; color: white; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s; }
+    button:hover { background-color: #00a8af; }
+    #status { margin-top: 12px; text-align: center; font-weight: bold; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Kas Vint Journey Group</h2>
+  <form id="kasForm">
+    <div class="form-group">
+      <label>ID</label>
+      <input type="text" id="id" placeholder="Masukkan ID" required>
+    </div>
+    <div class="form-group">
+      <label>Nama</label>
+      <input type="text" id="nama" placeholder="Masukkan Nama" required>
+    </div>
+    <div class="form-group">
+      <label>Nama Group</label>
+      <input type="text" id="namagroup" placeholder="Masukkan Nama Group" required>
+    </div>
+    <div class="form-group">
+      <label>Alamat</label>
+      <textarea id="alamat" rows="2" placeholder="Masukkan Alamat" required></textarea>
+    </div>
+    <div class="form-group">
+      <label>No HP</label>
+      <input type="tel" id="nohp" placeholder="08xxxxxxxxxx" required>
+    </div>
+    <div class="form-group">
+      <label>Cash / Transfer</label>
+      <select id="metode" required>
+        <option value="Cash">Cash</option>
+        <option value="Transfer">Transfer</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Setoran (Rp)</label>
+      <input type="number" id="setoran" placeholder="0" required>
+    </div>
+    <div class="form-group">
+      <label>Jumlah (Rp)</label>
+      <input type="number" id="jumlah" placeholder="0" required>
+    </div>
+    <div class="form-group">
+      <label>Keterangan</label>
+      <textarea id="keterangan" rows="2" placeholder="Keterangan tambahan"></textarea>
+    </div>
+    <button type="submit" id="btnSubmit">Kirim Data</button>
+  </form>
+  <div id="status"></div>
+</div>
+
+<script>
+  // GANTI URL DI BAWAH INI DENGAN URL DEPLOYMENT GOOGLE APPS SCRIPT ANDA
+  const APPS_SCRIPT_WEB_APP_URL = "APPS_SCRIPT_WEB_APP_URL";
+
+  document.getElementById('kasForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const btn = document.getElementById('btnSubmit');
+    const statusDiv = document.getElementById('status');
+    
+    btn.disabled = true;
+    btn.innerText = "Mengirim...";
+    statusDiv.innerText = "";
+
+    const payload = {
+      id: document.getElementById('id').value,
+      nama: document.getElementById('nama').value,
+      namagroup: document.getElementById('namagroup').value,
+      alamat: document.getElementById('alamat').value,
+      nohp: document.getElementById('nohp').value,
+      metode: document.getElementById('metode').value,
+      setoran: document.getElementById('setoran').value,
+      jumlah: document.getElementById('jumlah').value,
+      keterangan: document.getElementById('keterangan').value
+    };
+
+    fetch(APPS_SCRIPT_WEB_APP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      statusDiv.style.color = "#28a745";
+      statusDiv.innerText = "Data berhasil terkirim ke Google Spreadsheet!";
+      document.getElementById('kasForm').reset();
+    })
+    .catch(error => {
+      statusDiv.style.color = "#dc3545";
+      statusDiv.innerText = "Terjadi kesalahan saat mengirim data.";
+      console.error(error);
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.innerText = "Kirim Data";
+    });
+  });
+</script>
+
+</body>
+</html>
